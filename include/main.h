@@ -29,5 +29,11 @@
 #include "stm32f4xx_ll_utils.h"
 #include "stm32f4xx_ll_wwdg.h"
 
+#include "clock_config.h"
+#define USERLED_PORT GPIOA
+#define USERLED_PIN LL_GPIO_PIN_5
+#define USERBTN_PORT GPIOC
+#define USERBTN_PIN 13
+
 #endif // !MAIN_H
 #define MAIN_H
