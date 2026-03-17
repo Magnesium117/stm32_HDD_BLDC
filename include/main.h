@@ -1,5 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
+#include "stm32f446xx.h"
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_ll_adc.h"
 #include "stm32f4xx_ll_bus.h"
@@ -30,10 +31,36 @@
 #include "stm32f4xx_ll_wwdg.h"
 
 #include "clock_config.h"
+
 #define USERLED_PORT GPIOA
 #define USERLED_PIN LL_GPIO_PIN_5
 #define USERBTN_PORT GPIOC
-#define USERBTN_PIN 13
+#define USERBTN_PIN LL_GPIO_PIN_13
+#define L1_PORT GPIOA
+#define L1_SIG_PIN LL_GPIO_PIN_13
+#define L1_EN_PIN LL_GPIO_PIN_14
+#define L2_PORT GPIOB
+#define L2_SIG_PIN LL_GPIO_PIN_1
+#define L2_EN_PIN LL_GPIO_PIN_2
+#define L3_PORT GPIOC
+#define L3_SIG_PIN LL_GPIO_PIN_2
+#define L3_EN_PIN LL_GPIO_PIN_3
+
+typedef enum {
+  STATE_HIGH = 0b11,
+  STATE_LOW = 0b10,
+  STATE_HIGHZ = 0b00,
+} phaseState_t;
+struct motorState_s {
+  phaseState_t L1;
+  phaseState_t L2;
+  phaseState_t L3;
+};
+typedef struct motorState_s motorState_t;
+
+void writePin(GPIO_TypeDef *port, uint32_t pin, int value);
+void initMotorStates();
+void SetPinsFromState(motorState_t *motorState);
 
 #endif // !MAIN_H
 #define MAIN_H
