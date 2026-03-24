@@ -37,8 +37,10 @@
 #define USERBTN_PORT GPIOC
 #define USERBTN_PIN LL_GPIO_PIN_13
 #define L1_PORT GPIOA
-#define L1_SIG_PIN LL_GPIO_PIN_13
-#define L1_EN_PIN LL_GPIO_PIN_14
+#define L1_SIG_PIN                                                             \
+  LL_GPIO_PIN_11 // 13 und 14 sind die JTAG Pins -> man kann dann nicht gescheit
+                 // uploaden
+#define L1_EN_PIN LL_GPIO_PIN_12
 #define L2_PORT GPIOB
 #define L2_SIG_PIN LL_GPIO_PIN_1
 #define L2_EN_PIN LL_GPIO_PIN_2

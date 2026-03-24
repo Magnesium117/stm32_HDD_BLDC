@@ -3,7 +3,9 @@
 #include "stm32f4xx_ll_bus.h"
 #include "stm32f4xx_ll_gpio.h"
 #include "stm32f4xx_ll_tim.h"
-motorState_t MotorStates[6];
+#include "stm32f4xx_ll_utils.h"
+#define N_MOTOR_STATES 6
+motorState_t MotorStates[N_MOTOR_STATES];
 int state_counter = 0;
 int main() {
   //
@@ -20,6 +22,7 @@ int main() {
   // }
   initMotorStates();
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
   LL_GPIO_InitTypeDef GPIO_Initstruct;
   LL_GPIO_StructInit(&GPIO_Initstruct);
@@ -60,12 +63,13 @@ int main() {
    */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM1);
   LL_TIM_InitTypeDef TIM_InitStruct;
-  TIM_InitStruct.Prescaler = 8400; // clk=10kHz
-  TIM_InitStruct.Autoreload = 1000;
+  TIM_InitStruct.Prescaler = 840; // clk=100kHz -> T=10 us
+  TIM_InitStruct.Autoreload = 2;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   TIM_InitStruct.RepetitionCounter = 0;
   LL_TIM_Init(TIM1, &TIM_InitStruct);
+  LL_TIM_EnableARRPreload(TIM1);
   LL_TIM_EnableIT_UPDATE(TIM1);
   LL_TIM_EnableCounter(TIM1);
 
@@ -78,7 +82,21 @@ int main() {
   NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
   USERLED_PORT->ODR |= USERLED_PIN;
   // USERLED_PORT->ODR &= ~USERLED_PIN;
+  // int current_arr = 10000;
+  // int arr_min = 2;
+  int f_curr = 20; // Hz
+  int f_max = 600; // Hz
+  LL_TIM_SetAutoReload(TIM1,
+                       (int)(1 / (float)f_curr / (10e-6 * N_MOTOR_STATES)));
+
   while (1) {
+    if (f_curr < f_max) {
+      LL_TIM_SetAutoReload(TIM1,
+                           (int)(1 / (float)f_curr / (10e-6 * N_MOTOR_STATES)));
+      // LL_TIM_SetAutoReload(TIM1, (int)(1 / (float)f_curr / 10e-6));
+      f_curr += 1;
+      LL_mDelay(100);
+    }
   }
 }
 void initMotorStates() {
