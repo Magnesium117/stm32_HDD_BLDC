@@ -36,17 +36,16 @@
 #define USERLED_PIN LL_GPIO_PIN_5
 #define USERBTN_PORT GPIOC
 #define USERBTN_PIN LL_GPIO_PIN_13
-#define L1_PORT GPIOA
-#define L1_SIG_PIN                                                             \
-  LL_GPIO_PIN_11 // 13 und 14 sind die JTAG Pins -> man kann dann nicht gescheit
-                 // uploaden
-#define L1_EN_PIN LL_GPIO_PIN_12
-#define L2_PORT GPIOB
-#define L2_SIG_PIN LL_GPIO_PIN_1
+#define SIG_PORT GPIOC // Pins 6 8 9
+#define EN_PORT GPIOB  // Pins 1 2 7
+#define L1_SIG_PIN LL_GPIO_PIN_6
+// 13 und 14 sind die JTAG Pins -> man kann dann nicht gescheit
+// uploaden
+#define L1_EN_PIN LL_GPIO_PIN_1
+#define L2_SIG_PIN LL_GPIO_PIN_8
 #define L2_EN_PIN LL_GPIO_PIN_2
-#define L3_PORT GPIOC
-#define L3_SIG_PIN LL_GPIO_PIN_2
-#define L3_EN_PIN LL_GPIO_PIN_3
+#define L3_SIG_PIN LL_GPIO_PIN_9
+#define L3_EN_PIN LL_GPIO_PIN_7
 
 typedef enum {
   STATE_HIGH = 0b11,
@@ -60,7 +59,9 @@ struct motorState_s {
 };
 typedef struct motorState_s motorState_t;
 
+void setPWMvalue(float pwm);
 void writePin(GPIO_TypeDef *port, uint32_t pin, int value);
+void setPWMstate(uint32_t channel, int state);
 void initMotorStates();
 void SetPinsFromState(motorState_t *motorState);
 
